@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -42,7 +43,7 @@ public class Scraping {
 			options.addPreference("permissions.default.image", 2);
 			System.setProperty("webdriver.gecko.driver", "src/main/resources/geckodriver-v0.19.1-linux64/geckodriver");
 			WebDriver driver = new FirefoxDriver(options);
-			driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
+			
 			driver.get(url);
 			Map<String, String> multiHref = new HashMap<String, String>();
 			int i = 1;
@@ -130,6 +131,15 @@ public class Scraping {
 				String shoeimg = m.getValue().toString();
 				System.out.println("image url--" + shoeimg);
 				driver.get(shoeurl);
+				String imgsrc=null;
+				JavascriptExecutor jse = (JavascriptExecutor) driver;
+				try{
+					imgsrc=driver.findElement(By.cssSelector("#other_styles > a.selected > img")).getAttribute("src");
+				}catch(Exception ex11) {
+					imgsrc = (String) jse.executeScript("return arguments[0].toDataURL('image/png');", driver.findElement(By.cssSelector("#s7ZoomViewerViewer_zoomView > div > div:nth-child(3) > canvas")));
+					System.out.println(imgsrc);
+				}
+				System.out.println("image link -- "+imgsrc);
 				String title = driver.findElement(By.cssSelector("#product_title")).getText();
 				System.out.println("title---" + title);
 				String price = null;
