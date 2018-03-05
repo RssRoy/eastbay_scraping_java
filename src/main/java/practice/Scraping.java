@@ -12,6 +12,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 
 public class Scraping {
 
@@ -20,6 +21,8 @@ public class Scraping {
 		System.out.println(System.getProperty("user.dir"));
 		String pwd = System.getProperty("user.dir");
 
+		FirefoxOptions options = new FirefoxOptions();
+		options.addPreference("permissions.default.image", 2);
 		// System.setProperty("webdriver.chrome.driver",
 		// "src/main/resources/chromedriver");
 		// System.setProperty("webdriver.chrome.driver",
@@ -29,7 +32,7 @@ public class Scraping {
 		// ChromeOptions option =new ChromeOptions();
 		// option.addExtensions(new File(pwd+"/Block-image_v1.0.crx"));
 		// WebDriver driver = new ChromeDriver(option);
-		WebDriver driver = new FirefoxDriver();
+		WebDriver driver = new FirefoxDriver(options);
 		int page_no = 1;
 		driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
 		driver.get(
@@ -78,10 +81,12 @@ public class Scraping {
 			}
 
 		}
-		driver.findElement(By.cssSelector("#endecaResultsWrapper > div:nth-child(3) > div > div.endeca_pagination > a.next")).click();
+		driver.findElement(
+				By.cssSelector("#endecaResultsWrapper > div:nth-child(3) > div > div.endeca_pagination > a.next"))
+				.click();
 		List<WebElement> shoelis = driver.findElements(By.cssSelector("#endeca_search_results > ul > li"));
-		int lisize=shoelis.size();
-		for(i=1;i<=lisize;i++) {
+		int lisize = shoelis.size();
+		for (i = 1; i <= lisize; i++) {
 			try {
 
 				// check for li
@@ -128,20 +133,18 @@ public class Scraping {
 			driver.get(shoeurl);
 			String title = driver.findElement(By.cssSelector("#product_title")).getText();
 			System.out.println("title---" + title);
-			String price=null;
+			String price = null;
 			try {
-				price=driver.findElement(By.cssSelector("#sale_price")).getText();
-			}
-			catch(Exception ex) {
+				price = driver.findElement(By.cssSelector("#sale_price")).getText();
+			} catch (Exception ex) {
 				try {
 					price = driver.findElement(By.cssSelector("#list_price")).getText();
-				}
-				catch(Exception ex1) {
+				} catch (Exception ex1) {
 					System.out.println("No price found");
 					ex1.printStackTrace();
 				}
 			}
-			
+
 			System.out.println("price--" + price.substring(price.indexOf("$"), price.length()));
 			List<String> shoesize = new ArrayList<String>();
 			driver.findElement(By.cssSelector("#current_size_display")).click();
